@@ -2,11 +2,11 @@
 
 using namespace std;
 
-class Matrix {
+class Matrix { // Класс надо было сделать шаблонным.
   private:
     int rows;
     int cols;
-    int body[8][8];
+    int body[8][8]; // Фиксированный размер матриц, лучше исправить.
   public:
     Matrix(int c, int r, int array[64]){
       cols = c;
@@ -37,7 +37,7 @@ class Matrix {
       cout << endl;
     }
     
-    friend Matrix ones(Matrix &self);
+    friend Matrix ones(Matrix &self); // Дружественные функции не являются методами класса
     friend Matrix zeros(Matrix &self);
     friend Matrix operator*(Matrix &self, float n);
     friend bool operator==(Matrix &self, Matrix n);
@@ -47,7 +47,7 @@ class Matrix {
     friend Matrix operator^(Matrix &self, Matrix n);
 };
 
-Matrix zeros(Matrix &self){
+Matrix zeros(Matrix &self){ // Данная функция не является методом класса. Т.е. для ее вызова потребутся писать, например, zeros(M).print();. Лучше перенести ее в тело класса. 
   for (int j, i = 0; i < self.rows; i++){
     for (j = 0; j < self.cols; j++){
       self.body[i][j] = 0;
@@ -56,7 +56,8 @@ Matrix zeros(Matrix &self){
   return self; 
 }
 
-Matrix ones(Matrix &self){
+Matrix ones(Matrix &self){ // Данная функция не совсем правильно написан. В этой области видимости не существует переменных cols и rows. Чтобы ничего не менять, достаточно сделать функцию методом класса.
+                           // Соответсвенно в таком случае строчку friend Matrix ones(Matrix &self); следует удалить.
   if (cols != rows){
       cout << "Матрица не квадратная" << endl;
       return self;
@@ -129,7 +130,7 @@ Matrix operator-(Matrix &self, Matrix n){
   return self;
 }
 
-bool operator!=(Matrix &self, Matrix n){
+bool operator!=(Matrix &self, Matrix n){ // Не реализованная функция. Мешает компиляции. Лучше просто закомментировать или реализовать ее через обратную операцию к ==. 
     if (self ^ n == self.ones() || n ^ self == n.ones()){
       return true;
     }
@@ -148,7 +149,7 @@ int main(){
   Matrix M(c, r, body);
   Matrix N(c, r, NULL);
   Matrix D(c, r, NULL);
-  N.ones();
+  N.ones(); // Здесь неправильный вызов функции. Недостаточно аргументов передано. Например, чтобы программа заработала можно передать в качестве аргумента матрицу М. В таком случае проблем не будет.
   M.print();
   N.print();
   D.print();
@@ -156,8 +157,6 @@ int main(){
   D.print();
   return 0;
 }
-
-
 
 
 
